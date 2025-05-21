@@ -51,6 +51,19 @@ void draw_store(int rows, int cols, int count) {
     char msg[100];
     sprintf(msg, "Applications: %d", count);
     mvprintw((rows / 8) + 1, (cols - strlen(msg)) / 2, msg);
+    char *items[] = {
+        "Leetcode practice",
+        "Udemy courses",
+        "AWS certification",
+    };
+    int start_y = (rows / 8) + 3;
+    for (int i = 0; i < 3; ++i) {
+        if (count % 3 == i) {
+            attron(A_STANDOUT);
+            mvprintw(start_y + i, (cols - 25) / 2, "%d. %s", i + 1, items[i]);
+            attroff(A_STANDOUT);
+        }
+    }
 }
 
 void draw_opts(int rows, int cols, int count, GameState state) {
@@ -67,7 +80,6 @@ int main() {
   GameContext ctx = { .cur_state = STATE_MAIN };
   int rows, cols;
   int count = 0;
-  int ticks = 0;
   init_game();
   struct timespec last_time, cur_time;
   clock_gettime(CLOCK_MONOTONIC, &last_time);
@@ -104,7 +116,6 @@ int main() {
         count += seconds_passed;
         last_time = cur_time;
     }
-    ticks++;
   }
 
   if (endwin() == ERR) {
