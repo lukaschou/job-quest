@@ -9,6 +9,6 @@ typedef enum {
     KEY_HOLD,
 } KeyState;
 
-void handle_key_presses(KeyState keys[MAX_KEYS]);
+void get_keys(KeyState keys[MAX_KEYS]);
 
 #endif

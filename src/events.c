@@ -1,7 +1,7 @@
 #include "events.h"
 #include <ncurses.h>
 
-void handle_key_presses(KeyState keys[MAX_KEYS]) {
+void get_keys(KeyState keys[MAX_KEYS]) {
     int ch = getch();
     if (ch >= 0 && ch <= MAX_KEYS) {
         if (keys[ch] == KEY_INACTIVE) {

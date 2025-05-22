@@ -1,21 +1,11 @@
 #include "events.h"
+#include "game_state.h"
 #include "system.h"
-#include <curses.h>
 #include <stdlib.h>
 #include <ncurses.h>
 #include <string.h>
-#include <sys/_types/_timespec.h>
 #include <unistd.h>
 #include <time.h>
-
-typedef enum {
-    STATE_MAIN,
-    STATE_STORE,
-} GameState;
-
-typedef struct {
-    GameState cur_state;
-} GameContext;
 
 void draw_clicker(int rows, int cols, int count) {
     char apps[24];
@@ -60,11 +50,10 @@ void draw_opts(int rows, int cols, int count, GameState state) {
 }
 
 int main() {
-  GameContext ctx = { .cur_state = STATE_MAIN };
+  GameContext ctx = { .cur_state = STATE_MAIN, .apps = 0 };
   KeyState keys[MAX_KEYS] = { KEY_INACTIVE };
 
   int rows, cols;
-  int count = 0;
   int highlight = 0;
   init_game();
   while (1) {
@@ -72,21 +61,20 @@ int main() {
     getmaxyx(stdscr, rows, cols);
     switch(ctx.cur_state) {
         case STATE_MAIN:
-            draw_clicker(rows, cols, count);
+            draw_clicker(rows, cols, ctx.apps);
             break;
         case STATE_STORE:
-            draw_store(rows, cols, count, keys, &highlight);
+            draw_store(rows, cols, ctx.apps, keys, &highlight);
             break;
     }
-    draw_opts(rows, cols, count, ctx.cur_state);
+    draw_opts(rows, cols, ctx.apps, ctx.cur_state);
     wborder(stdscr, '|', '|', '-', '-', '+', '+', '+', '+');
    
-    handle_key_presses(keys);
+    get_keys(keys);
 
-    if (keys[' '] == KEY_PRESS && ctx.cur_state == STATE_MAIN) {
-        count++;
-    } 
-    else if (keys['q']) {
+    if (keys[' '] == KEY_PRESS) {
+        ctx.apps++;
+    } else if (keys['q']) {
         break;
     } else if (keys['s'] && ctx.cur_state == STATE_MAIN) {
         highlight = 0;
