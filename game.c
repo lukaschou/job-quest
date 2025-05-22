@@ -1,4 +1,4 @@
-#include <curses.h>
+#include "system.h"
 #include <stdlib.h>
 #include <ncurses.h>
 #include <string.h>
@@ -16,32 +16,6 @@ typedef enum {
 typedef struct {
     GameState cur_state;
 } GameContext;
-
-void die(char *msg) {
-    fprintf(stderr, "%s", msg);
-    exit(EXIT_FAILURE);
-}
-
-void init_game() {
-    if (!initscr()) {
-        die("Failed to initialize ncurses screen\n");
-    }
-    // Set cursor to invisible
-    if (curs_set(0) == ERR) {
-        die("Terminal does not support invisible cursor\n");
-    }
-    if (raw() == ERR) {
-        die("Failed to enter raw mode\n");
-    }
-    // Reads block for 100 milliseconds before returning ERR
-    timeout(100); 
-    if (keypad(stdscr, 1)) {
-        die("Failed to enable terminal keypad\n");
-    }
-    if (noecho() == ERR) {
-        die("Failed to disable echo\n");
-    }
-}
 
 void draw_clicker(int rows, int cols, int count) {
     char apps[24];
@@ -125,11 +99,7 @@ int main() {
     } else if (key_presses['m'] && ctx.cur_state == STATE_STORE) {
         ctx.cur_state = STATE_MAIN;
     }
-
-  }
-
-  if (endwin() == ERR) {
-      die("Failed to clean up ncurses stuff\n");
-  }
+  } 
+  cleanup();
   return 0;
 }
