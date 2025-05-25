@@ -12,6 +12,7 @@ typedef struct {
   int unlocked;
   int quant;
   int max_quant;
+  unsigned long bonus_apps;
 } StoreItem;
 
 typedef struct {
@@ -29,6 +30,7 @@ typedef struct {
     GameState cur_state;
     StoreContext *store;
     unsigned long apps;
+    unsigned long apps_per_sec;
 } GameContext;
 
 #endif

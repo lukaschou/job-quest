@@ -26,7 +26,8 @@ void init_store(StoreContext *store) {
     .price = 100,
     .quant = 0,
     .max_quant = -1,
-    .unlocked = 1
+    .unlocked = 1,
+    .bonus_apps = 1,
   };
   store->items[store->unlocked_count++] = (StoreItem){
     .name = "AI Cover Letter",
@@ -34,7 +35,8 @@ void init_store(StoreContext *store) {
     .price = 100,
     .quant = 0,
     .max_quant = -1,
-    .unlocked = 1
+    .unlocked = 1,
+    .bonus_apps = 2,
   };
   store->items[store->unlocked_count++] = (StoreItem){
     .name = "Buzzword Pack",
@@ -42,7 +44,8 @@ void init_store(StoreContext *store) {
     .price = 200,
     .quant = 0,
     .max_quant = -1,
-    .unlocked = 1
+    .unlocked = 1,
+    .bonus_apps = 3,
   };
 }
 

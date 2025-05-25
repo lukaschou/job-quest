@@ -15,5 +15,6 @@ void get_keys(KeyState keys[MAX_KEYS]);
 int update(GameContext *ctx, KeyState keys[MAX_KEYS]);
 void update_store(GameContext *ctx, KeyState keys[MAX_KEYS]);
 void update_main(GameContext *ctx, KeyState keys[MAX_KEYS]);
+void update_aps(GameContext *ctx);
 
 #endif

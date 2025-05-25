@@ -49,9 +49,14 @@ void update_store(GameContext *ctx, KeyState keys[MAX_KEYS]) {
         if (selectedItem->price <= ctx->apps) {
             selectedItem->quant += 1;
             ctx->apps -= selectedItem->price;
+            ctx->apps_per_sec += selectedItem->bonus_apps;
         }
     }
 }
+
+void update_aps(GameContext *ctx) {
+    ctx->apps += ctx->apps_per_sec;
+} 
 
 void update_main(GameContext *ctx, KeyState keys[MAX_KEYS]) {
     if (keys['s']) {
