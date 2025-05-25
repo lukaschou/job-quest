@@ -42,7 +42,7 @@ void update_store(GameContext *ctx, KeyState keys[MAX_KEYS]) {
         ctx->cur_state = STATE_MAIN;
     } else if (keys['k'] && store->selected_item > 0) {
         store->selected_item--;
-    } else if (keys['j'] && store->selected_item < 2) {
+    } else if (keys['j'] && store->selected_item < store->item_count - 1) {
         store->selected_item++;
     }
 }

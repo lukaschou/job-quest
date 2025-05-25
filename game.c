@@ -9,7 +9,15 @@
 #include <time.h>
 
 int main() {
-  StoreState store = { .selected_item = 0 };
+  StoreItem test = { 
+    .name = "Harvard CS50",
+    .desc = "An introduction to Computer Science.",
+    .price = 100,
+    .visible = 1,
+    .quant = 0,
+    .max_quant = 1
+  };
+  StoreState store = { .selected_item = 0, .item_count = 1, .items[0] = test };
   GameContext ctx = { .cur_state = STATE_MAIN, .apps = 0, &store };
   KeyState keys[MAX_KEYS] = { KEY_INACTIVE };
 
