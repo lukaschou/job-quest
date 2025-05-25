@@ -1,4 +1,5 @@
 #include "events.h"
+#include "game_state.h"
 #include <ncurses.h>
 
 void get_keys(KeyState keys[MAX_KEYS]) {
@@ -13,5 +14,42 @@ void get_keys(KeyState keys[MAX_KEYS]) {
         for (int i = 0; i < MAX_KEYS; ++i) {
             keys[i] = KEY_INACTIVE;
         }
+    }
+}
+
+/* 
+ * Updates game context given current key state, returns 1 on update and 
+ * 0 on exit key press 
+ * */
+int update(GameContext *ctx, KeyState keys[MAX_KEYS]) {
+    if (keys['q']) {
+        return 0;
+    } else if (keys[' '] == KEY_PRESS) {
+        ctx->apps++;
+    } else if (ctx->cur_state == STATE_MAIN) {
+        update_main(ctx, keys);
+    } else if (ctx->cur_state == STATE_STORE) {
+        update_store(ctx, keys);
+    }
+
+    return 1;
+}
+
+void update_store(GameContext *ctx, KeyState keys[MAX_KEYS]) {
+    StoreState *store = ctx->store;
+
+    if (keys['m']) {
+        ctx->cur_state = STATE_MAIN;
+    } else if (keys['k'] && store->selected_item > 0) {
+        store->selected_item--;
+    } else if (keys['j'] && store->selected_item < 2) {
+        store->selected_item++;
+    }
+}
+
+void update_main(GameContext *ctx, KeyState keys[MAX_KEYS]) {
+    if (keys['s']) {
+        ctx->store->selected_item = 0;
+        ctx->cur_state = STATE_STORE;
     }
 }

@@ -7,8 +7,13 @@ typedef enum {
 } GameState;
 
 typedef struct {
+    int selected_item;
+} StoreState;
+
+typedef struct {
     GameState cur_state;
     long apps;
+    StoreState *store;
 } GameContext;
 
 #endif
