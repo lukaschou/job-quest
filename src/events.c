@@ -44,6 +44,12 @@ void update_store(GameContext *ctx, KeyState keys[MAX_KEYS]) {
         store->selected_item--;
     } else if (keys['j'] && store->selected_item < store->unlocked_count - 1) {
         store->selected_item++;
+    } else if (keys['b']) {
+        StoreItem* selectedItem = &store->items[store->selected_item];
+        if (selectedItem->price <= ctx->apps) {
+            selectedItem->quant += 1;
+            ctx->apps -= selectedItem->price;
+        }
     }
 }
 

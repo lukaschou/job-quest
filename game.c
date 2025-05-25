@@ -2,11 +2,8 @@
 #include "events.h"
 #include "game_state.h"
 #include "system.h"
-#include <stdlib.h>
 #include <ncurses.h>
-#include <string.h>
 #include <unistd.h>
-#include <time.h>
 
 int main() {
   GameContext ctx;

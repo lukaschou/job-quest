@@ -8,7 +8,7 @@
 typedef struct {
   char *name;
   char *desc;
-  int price;
+  unsigned long price;
   int unlocked;
   int quant;
   int max_quant;
