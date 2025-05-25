@@ -1,6 +1,8 @@
 #ifndef GAME_STATE_H
 #define GAME_STATE_H
 
+#include <ncurses.h>
+
 #define MAX_STORE_ITEMS 3
 
 typedef struct {

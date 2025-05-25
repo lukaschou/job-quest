@@ -7,5 +7,6 @@
 void draw(GameContext *ctx);
 void draw_store(int rows, int cols, GameContext *ctx);
 void draw_opts(int rows, int cols, GameState state);
+void create_box(int y, int x, int len, int height);
 
 #endif

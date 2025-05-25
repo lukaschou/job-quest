@@ -53,11 +53,11 @@ void init_game(GameContext *ctx, StoreContext *store) {
   ctx->cur_state = STATE_HOME;
   ctx->apps = 0;
   ctx->store = store;
-  init_scr();
+  init_main_scr();
 }
 
 /* Initialize ncurses subsystem */
-void init_scr() {
+void init_main_scr() {
     if (!initscr()) {
         die_curses("Failed to initialize ncurses screen\n");
     }
