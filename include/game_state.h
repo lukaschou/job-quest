@@ -12,7 +12,7 @@ typedef struct {
   int unlocked;
   int quant;
   int max_quant;
-  unsigned long bonus_apps;
+  unsigned long APS_bonus;
 } StoreItem;
 
 typedef struct {

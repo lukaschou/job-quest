@@ -23,29 +23,29 @@ void init_store(StoreContext *store) {
   store->items[store->unlocked_count++] = (StoreItem){
     .name = "LeetCode",
     .desc = "Solve a medium. Cry. Repeat. Character-building stuff.",
-    .price = 100,
+    .price = 1,
     .quant = 0,
-    .max_quant = -1,
+    .max_quant = 10,
     .unlocked = 1,
-    .bonus_apps = 1,
+    .APS_bonus = 1,
   };
   store->items[store->unlocked_count++] = (StoreItem){
     .name = "AI Cover Letter",
     .desc = "Looks good. No one read it anyway.",
     .price = 100,
     .quant = 0,
-    .max_quant = -1,
+    .max_quant = 10,
     .unlocked = 1,
-    .bonus_apps = 2,
+    .APS_bonus = 2,
   };
   store->items[store->unlocked_count++] = (StoreItem){
     .name = "Buzzword Pack",
     .desc = "Synergize your leverage to optimize alignment.",
     .price = 200,
     .quant = 0,
-    .max_quant = -1,
+    .max_quant = 10,
     .unlocked = 1,
-    .bonus_apps = 3,
+    .APS_bonus = 3,
   };
 }
 

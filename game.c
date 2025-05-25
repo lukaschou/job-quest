@@ -21,7 +21,7 @@ int main() {
     time_t now = time(NULL);
     if (now > last_tick) {
       last_tick = now;
-      update_aps(&ctx);
+      tick_update(&ctx);
     }
     // We don't need to 'refresh' since the getch() call in update does this
     if (!update(&ctx, keys)) {
