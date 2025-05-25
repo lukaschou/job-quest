@@ -3,7 +3,7 @@
 
 void draw_opts(int rows, int cols, GameState state) {
     char *opts;
-    if (state == STATE_MAIN) {
+    if (state == STATE_HOME) {
         opts = "[q]: Quit               [s]: Store";
     } else if (state == STATE_STORE) {
         opts = "[q]: Quit               [m]: Main";
@@ -19,7 +19,7 @@ void draw_main(int rows, int cols, long apps) {
 
 // This will need lots of reworking as the item list grows...
 void draw_store(int rows, int cols, GameContext *ctx) {
-    StoreState *store = ctx->store;
+    StoreContext *store = ctx->store;
     mvprintw(rows / 8, (cols - 11) / 2, "MARKETPLACE");
    
     char msg[100];
@@ -28,9 +28,9 @@ void draw_store(int rows, int cols, GameContext *ctx) {
     
     int start_y = (rows / 8) + 3;
     int drawn = 0;
-    for (int i = 0; i < MAX_STORE_ITEMS && drawn < store->item_count; ++i) {
+    for (int i = 0; i < MAX_STORE_ITEMS && drawn < store->unlocked_count; ++i) {
         StoreItem *item = &store->items[i];
-        if (!item->visible) continue;
+        if (!item->unlocked) continue;
 
         if (store->selected_item == drawn) {
             mvprintw((rows * 3) / 5, (cols - 25) / 2, "%s", item->desc);
@@ -48,7 +48,7 @@ void draw(GameContext *ctx) {
     int rows, cols;
     getmaxyx(stdscr, rows, cols);
     switch (ctx->cur_state) {
-        case STATE_MAIN:
+        case STATE_HOME:
             draw_main(rows, cols, ctx->apps);
             break;
         case STATE_STORE:

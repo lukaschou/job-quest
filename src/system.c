@@ -16,8 +16,48 @@ void die_sys(char *msg) {
     exit(EXIT_FAILURE);
 }
 
+/* Initializes and populates the store */
+void init_store(StoreContext *store) {
+  store->selected_item = 0;
+  store->unlocked_count = 0;
+  store->items[store->unlocked_count++] = (StoreItem){
+    .name = "LeetCode",
+    .desc = "Solve a medium. Cry. Repeat. Character-building stuff.",
+    .price = 100,
+    .quant = 0,
+    .max_quant = -1,
+    .unlocked = 1
+  };
+  store->items[store->unlocked_count++] = (StoreItem){
+    .name = "AI Cover Letter",
+    .desc = "Looks good. No one read it anyway.",
+    .price = 100,
+    .quant = 0,
+    .max_quant = -1,
+    .unlocked = 1
+  };
+  store->items[store->unlocked_count++] = (StoreItem){
+    .name = "Buzzword Pack",
+    .desc = "Synergize your leverage to optimize alignment.",
+    .price = 200,
+    .quant = 0,
+    .max_quant = -1,
+    .unlocked = 1
+  };
+}
+
+
+/* Initializes game context and screen system */
+void init_game(GameContext *ctx, StoreContext *store) {
+  init_store(store);
+  ctx->cur_state = STATE_HOME;
+  ctx->apps = 0;
+  ctx->store = store;
+  init_scr();
+}
+
 /* Initialize ncurses subsystem */
-void init_game() {
+void init_scr() {
     if (!initscr()) {
         die_curses("Failed to initialize ncurses screen\n");
     }

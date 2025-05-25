@@ -26,7 +26,7 @@ int update(GameContext *ctx, KeyState keys[MAX_KEYS]) {
         return 0;
     } else if (keys[' '] == KEY_PRESS) {
         ctx->apps++;
-    } else if (ctx->cur_state == STATE_MAIN) {
+    } else if (ctx->cur_state == STATE_HOME) {
         update_main(ctx, keys);
     } else if (ctx->cur_state == STATE_STORE) {
         update_store(ctx, keys);
@@ -36,13 +36,13 @@ int update(GameContext *ctx, KeyState keys[MAX_KEYS]) {
 }
 
 void update_store(GameContext *ctx, KeyState keys[MAX_KEYS]) {
-    StoreState *store = ctx->store;
+    StoreContext *store = ctx->store;
 
     if (keys['m']) {
-        ctx->cur_state = STATE_MAIN;
+        ctx->cur_state = STATE_HOME;
     } else if (keys['k'] && store->selected_item > 0) {
         store->selected_item--;
-    } else if (keys['j'] && store->selected_item < store->item_count - 1) {
+    } else if (keys['j'] && store->selected_item < store->unlocked_count - 1) {
         store->selected_item++;
     }
 }
