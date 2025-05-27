@@ -4,7 +4,7 @@
 #include "game_state.h"
 #include <string.h>
 
-#define MAX_OPTS 4
+#define MAX_OPTS 3
 #define MAX_MSG_CHARS 256
 #define STORE_ITEMS_WIDTH 50
 #define STORE_DESC_WIDTH 70

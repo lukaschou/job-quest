@@ -25,8 +25,6 @@ void draw_opts(int rows, int cols, GameState state) {
         opts[count++] = "[l]: Store";
     } else if (state == STATE_STORE) {
         opts[count++] = "[h]: Home";
-        opts[count++] = "[j]: Down";
-        opts[count++] = "[k]: Up";
     }
 
     // Concatenate all options with 10 spaces
@@ -58,28 +56,51 @@ void draw_store(int rows, int cols, GameContext *ctx) {
     mvprintw(get_store_header_start_y(rows) + 1, get_middle_x(cols, strlen(msg)), msg);
 
     int items_start_y = get_store_header_start_y(rows) + 3;
-    int drawn = 0;
-    for (int i = 0; i < MAX_STORE_ITEMS && drawn < store->unlocked_count; ++i) {
-        StoreItem *item = &store->items[i];
-        if (!item->unlocked) continue;
-
-        if (store->selected_item == drawn) {
-            mvprintw(get_opts_start_y(rows) - 4, (cols - strlen(item->desc)) / 2, "%s", item->desc);
-            attron(A_STANDOUT);
-        }
-        mvprintw(items_start_y + i, get_middle_x(cols, STORE_ITEMS_WIDTH) + 3, "%s (%d) x%d", 
-                 item->name, item->price, item->quant);
-
-        attroff(A_STANDOUT);
-        drawn++;
-      }
-    
     int store_box_y = get_store_header_start_y(rows) + 2;
+    int store_height = get_opts_start_y(rows) - store_box_y - STORE_DESC_HEIGHT - 4;
+    int max_items = store_height - 1;
+    int start = 0;
+    if (store->selected_item >= max_items) {
+        mvprintw(4, 5, "ASD");
+        start = store->selected_item - max_items + 1;
+    }
+    mvprintw(5, 5, "%d, %d, %d", start, max_items, store->selected_item);
+    int drawn = 0;
+    for (int i = start; i < store->unlocked_count && drawn < max_items; ++i) {
+        mvprintw(6, 5, "%d", drawn);
+        StoreItem *item = &store->items[i];
+        if (store->selected_item == i) {
+            // Print description
+            mvprintw(
+                get_opts_start_y(rows) - 4,
+                (cols - strlen(item->desc)) / 2,
+                "%s",
+                item->desc
+            ); 
+            attron(A_STANDOUT); // Highlight
+        }
+        mvprintw(
+            items_start_y + drawn,
+            get_middle_x(cols, STORE_ITEMS_WIDTH) + 3,
+            "%s (%d)",
+            item->name,
+            item->price
+        ); 
+        attroff(A_STANDOUT);
+        // Print quantity on right side (MAX 3 digits)
+        mvprintw(
+            items_start_y + drawn,
+            get_middle_x(cols, STORE_ITEMS_WIDTH) + STORE_ITEMS_WIDTH  - 5,
+            "x%03d",
+            item->quant
+        );
+        drawn++;
+    }
     create_box(
         store_box_y,
         get_middle_x(cols, STORE_ITEMS_WIDTH),
         STORE_ITEMS_WIDTH,
-        get_opts_start_y(rows) - store_box_y - STORE_DESC_HEIGHT - 4,
+        store_height,
         '+',
         '+',
         '+',
