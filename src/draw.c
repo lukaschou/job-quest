@@ -57,7 +57,7 @@ void draw_store(int rows, int cols, GameContext *ctx) {
     mvprintw(get_store_header_start_y(rows), get_middle_x(cols, strlen("MARKETPLACE")), "MARKETPLACE");
     mvprintw(get_store_header_start_y(rows) + 1, get_middle_x(cols, strlen(msg)), msg);
 
-    int items_start_y = get_store_header_start_y(rows) + 4;
+    int items_start_y = get_store_header_start_y(rows) + 3;
     int drawn = 0;
     for (int i = 0; i < MAX_STORE_ITEMS && drawn < store->unlocked_count; ++i) {
         StoreItem *item = &store->items[i];
@@ -67,8 +67,8 @@ void draw_store(int rows, int cols, GameContext *ctx) {
             mvprintw(get_opts_start_y(rows) - 4, (cols - strlen(item->desc)) / 2, "%s", item->desc);
             attron(A_STANDOUT);
         }
-        mvprintw(items_start_y + i, (cols - 25) / 2, "%d. %s (%d) [%d]", 
-                drawn+1, item->name, item->price, item->quant);
+        mvprintw(items_start_y + i, get_middle_x(cols, STORE_ITEMS_WIDTH) + 3, "%s (%d) x%d", 
+                 item->name, item->price, item->quant);
 
         attroff(A_STANDOUT);
         drawn++;
