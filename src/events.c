@@ -2,8 +2,10 @@
 #include "game_state.h"
 #include <ncurses.h>
 
+/* Update key state */
 void get_keys(KeyState keys[MAX_KEYS]) {
     int ch = getch();
+    // Ignore non-ASCII chars
     if (ch >= 0 && ch <= MAX_KEYS) {
         if (keys[ch] == KEY_INACTIVE) {
             keys[ch] = KEY_PRESS;
@@ -19,15 +21,15 @@ void get_keys(KeyState keys[MAX_KEYS]) {
 
 /* 
  * Updates game context given current key state, returns 1 on update and 
- * 0 on exit key press 
- * */
+ * 0 on exit request
+ */
 int update(GameContext *ctx, KeyState keys[MAX_KEYS]) {
     if (keys['q']) {
         return 0;
     } else if (keys[' '] == KEY_PRESS) {
         ctx->apps++;
     } else if (ctx->cur_state == STATE_HOME) {
-        update_main(ctx, keys);
+        update_home(ctx, keys);
     } else if (ctx->cur_state == STATE_STORE) {
         update_store(ctx, keys);
     }
@@ -38,7 +40,7 @@ int update(GameContext *ctx, KeyState keys[MAX_KEYS]) {
 void update_store(GameContext *ctx, KeyState keys[MAX_KEYS]) {
     StoreContext *store = ctx->store;
 
-    if (keys['m']) {
+    if (keys['h']) {
         ctx->cur_state = STATE_HOME;
     } else if (keys['k'] && store->selected_item > 0) {
         store->selected_item--;
@@ -58,8 +60,8 @@ void tick_update(GameContext *ctx) {
     ctx->apps += ctx->apps_per_sec;
 } 
 
-void update_main(GameContext *ctx, KeyState keys[MAX_KEYS]) {
-    if (keys['s']) {
+void update_home(GameContext *ctx, KeyState keys[MAX_KEYS]) {
+    if (keys['l']) {
         ctx->store->selected_item = 0;
         ctx->cur_state = STATE_STORE;
     }

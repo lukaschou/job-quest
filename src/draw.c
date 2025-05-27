@@ -1,57 +1,98 @@
 #include "draw.h"
 #include <ncurses.h>
 
+int get_opts_start_y(int rows) {
+    // Opts line is always 7/8 down the screen
+    return (rows * 7) / 8;
+}
+
+int get_store_header_start_y(int rows) {
+    // Store header begins 1/8 down the screen
+    return rows / 8;
+}
+
+int get_middle_x(int cols, int msg_len) {
+    return (cols - msg_len) / 2;
+}
+
+/* Draws options line displayed on all screens */
 void draw_opts(int rows, int cols, GameState state) {
-    char *opts;
+    char *opts[MAX_OPTS];
+    int count = 0;
+    opts[count++] = "[q]: Quit";
+
     if (state == STATE_HOME) {
-        opts = "[q]: Quit               [s]: Store";
+        opts[count++] = "[l]: Store";
     } else if (state == STATE_STORE) {
-        opts = "[q]: Quit               [m]: Main";
+        opts[count++] = "[h]: Home";
+        opts[count++] = "[j]: Down";
+        opts[count++] = "[k]: Up";
     }
 
-    int opts_y = (rows * 7) / 8;
-    int opts_x = (cols - strlen(opts)) / 2;
-    mvprintw(opts_y, opts_x, opts);
+    // Concatenate all options with 10 spaces
+    char opts_msg[MAX_MSG_CHARS] = {0};
+    for (int i = 0; i < count; ++i) {
+        strcat(opts_msg, opts[i]);
+        if (i != count-1) {
+            strcat(opts_msg, "          ");
+        }
+    }
+
+    mvprintw(get_opts_start_y(rows), get_middle_x(cols, strlen(opts_msg)), opts_msg);
 }
 
-void draw_main(int rows, int cols, long apps) {
-    char apps_msg[50];
+/* Draws home screen */
+void draw_home(int rows, int cols, long apps) {
+    char apps_msg[MAX_MSG_CHARS];
     sprintf(apps_msg, "Applications: %lu", apps);
-    mvprintw(rows / 2, (cols - strlen(apps_msg)) / 2, apps_msg);
+    mvprintw(rows / 2, get_middle_x(cols, strlen(apps_msg)), apps_msg);
 }
 
-// This will need lots of reworking as the item list grows...
+/* Draws store screen */
 void draw_store(int rows, int cols, GameContext *ctx) {
     StoreContext *store = ctx->store;
-    int top = (rows / 8) + 2;
-    int bottom = (rows * 7) / 8;
-    int box_height = bottom - top - 1;
-    int header_y = rows / 8;
-    int header_x = (cols - strlen("MARKETPLACE")) / 2;
-    mvprintw(header_y, header_x, "MARKETPLACE");
 
-    char msg[100];
+    char msg[MAX_MSG_CHARS];
     sprintf(msg, "Applications: %lu", ctx->apps);
-    mvprintw(header_y + 1, (cols - strlen(msg)) / 2, msg);
+    mvprintw(get_store_header_start_y(rows), get_middle_x(cols, strlen("MARKETPLACE")), "MARKETPLACE");
+    mvprintw(get_store_header_start_y(rows) + 1, get_middle_x(cols, strlen(msg)), msg);
 
-    int start_y = (rows / 8) + 4;
+    int items_start_y = get_store_header_start_y(rows) + 4;
     int drawn = 0;
     for (int i = 0; i < MAX_STORE_ITEMS && drawn < store->unlocked_count; ++i) {
         StoreItem *item = &store->items[i];
         if (!item->unlocked) continue;
 
         if (store->selected_item == drawn) {
-            mvprintw(bottom - 3, (cols - strlen(item->desc)) / 2, "%s", item->desc);
+            mvprintw(get_opts_start_y(rows) - 3, (cols - strlen(item->desc)) / 2, "%s", item->desc);
             attron(A_STANDOUT);
         }
-        mvprintw(start_y + i, (cols - 25) / 2, "%d. %s (%d) [%d]", 
+        mvprintw(items_start_y + i, (cols - 25) / 2, "%d. %s (%d) [%d]", 
                 drawn+1, item->name, item->price, item->quant);
 
         attroff(A_STANDOUT);
         drawn++;
       }
-    create_box(top, (cols - 50) / 2, 50, box_height - 5);
-    create_box(bottom - 5, (cols - 70) / 2, 70, 4);
+    
+    int store_box_y = get_store_header_start_y(rows) + 2;
+    create_box(
+        store_box_y,
+        get_middle_x(cols, STORE_ITEMS_WIDTH),
+        STORE_ITEMS_WIDTH,
+        get_opts_start_y(rows) - store_box_y - STORE_DESC_HEIGHT - 3,
+        '+',
+        '-',
+        '|'
+    );
+    create_box(
+        get_opts_start_y(rows) - STORE_DESC_HEIGHT - 1,
+        get_middle_x(cols, STORE_DESC_WIDTH),
+        STORE_DESC_WIDTH,
+        STORE_DESC_HEIGHT,
+        '+',
+        '=',
+        ' '
+    );
 }
 
 void draw(GameContext *ctx) {
@@ -59,7 +100,7 @@ void draw(GameContext *ctx) {
     getmaxyx(stdscr, rows, cols);
     switch (ctx->cur_state) {
         case STATE_HOME:
-            draw_main(rows, cols, ctx->apps);
+            draw_home(rows, cols, ctx->apps);
             break;
         case STATE_STORE:
             draw_store(rows, cols, ctx);
@@ -69,13 +110,26 @@ void draw(GameContext *ctx) {
     wborder(stdscr, '|', '|', '-', '-', '+', '+', '+', '+');
 }
 
-void create_box(int y, int x, int len, int height) {	
-	mvaddch(y, x, '+');
-  mvaddch(y, x + len, '+');
-  mvaddch(y + height, x, '+');
-  mvaddch(y + height, x + len, '+');
-  mvhline(y, x + 1, '=', len - 1);
-  mvhline(y + height, x + 1, '=', len - 1);
-  mvvline(y + 1, x, ' ', height - 1);
-  mvvline(y + 1, x + len, ' ', height - 1);
+/* 
+ * Creates a box starting at position x, y of a given width and height.
+ * Corner, horizontal and vertical characters must be specified. User must 
+ * still call 'refresh()' to actually render the box.
+ */
+void create_box(
+    int y,
+    int x,
+    int len,
+    int height,
+    char corner,
+    char horiz,
+    char vert
+) {	
+	mvaddch(y, x, corner);
+    mvaddch(y, x + len, corner);
+    mvaddch(y + height, x, corner);
+    mvaddch(y + height, x + len, corner);
+    mvhline(y, x + 1, horiz, len - 1);
+    mvhline(y + height, x + 1, horiz, len - 1);
+    mvvline(y + 1, x, vert, height - 1);
+    mvvline(y + 1, x + len, vert, height - 1);
 }
