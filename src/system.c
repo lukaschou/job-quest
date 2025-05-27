@@ -23,9 +23,9 @@ void init_store(StoreContext *store) {
   store->items[store->unlocked_count++] = (StoreItem){
     .name = "LeetCode",
     .desc = "Solve a medium. Cry. Repeat. Character-building stuff.",
-    .price = 1,
+    .price = 50,
     .quant = 0,
-    .max_quant = 10,
+    .max_quant = -1,
     .unlocked = 1,
     .APS_bonus = 1,
   };
@@ -34,7 +34,7 @@ void init_store(StoreContext *store) {
     .desc = "Looks good. No one read it anyway.",
     .price = 100,
     .quant = 0,
-    .max_quant = 10,
+    .max_quant = -1,
     .unlocked = 1,
     .APS_bonus = 2,
   };
@@ -43,7 +43,7 @@ void init_store(StoreContext *store) {
     .desc = "Synergize your leverage to optimize alignment.",
     .price = 200,
     .quant = 0,
-    .max_quant = 10,
+    .max_quant = -1,
     .unlocked = 1,
     .APS_bonus = 3,
   };
