@@ -19,7 +19,10 @@ void create_box(
     int x,
     int len,
     int height, 
-    char corner,
+    char corner_tl,
+    char corner_tr,
+    char corner_bl,
+    char corner_br,
     char horiz,
     char vert
 );

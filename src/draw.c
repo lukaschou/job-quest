@@ -64,7 +64,7 @@ void draw_store(int rows, int cols, GameContext *ctx) {
         if (!item->unlocked) continue;
 
         if (store->selected_item == drawn) {
-            mvprintw(get_opts_start_y(rows) - 3, (cols - strlen(item->desc)) / 2, "%s", item->desc);
+            mvprintw(get_opts_start_y(rows) - 4, (cols - strlen(item->desc)) / 2, "%s", item->desc);
             attron(A_STANDOUT);
         }
         mvprintw(items_start_y + i, (cols - 25) / 2, "%d. %s (%d) [%d]", 
@@ -79,17 +79,23 @@ void draw_store(int rows, int cols, GameContext *ctx) {
         store_box_y,
         get_middle_x(cols, STORE_ITEMS_WIDTH),
         STORE_ITEMS_WIDTH,
-        get_opts_start_y(rows) - store_box_y - STORE_DESC_HEIGHT - 3,
+        get_opts_start_y(rows) - store_box_y - STORE_DESC_HEIGHT - 4,
+        '+',
+        '+',
+        '+',
         '+',
         '-',
         '|'
     );
     create_box(
-        get_opts_start_y(rows) - STORE_DESC_HEIGHT - 1,
+        get_opts_start_y(rows) - STORE_DESC_HEIGHT - 2,
         get_middle_x(cols, STORE_DESC_WIDTH),
         STORE_DESC_WIDTH,
         STORE_DESC_HEIGHT,
-        '+',
+        '[',
+        ']',
+        '[',
+        ']',
         '=',
         ' '
     );
@@ -120,14 +126,17 @@ void create_box(
     int x,
     int len,
     int height,
-    char corner,
+    char corner_tl,
+    char corner_tr,
+    char corner_bl,
+    char corner_br,
     char horiz,
     char vert
 ) {	
-	mvaddch(y, x, corner);
-    mvaddch(y, x + len, corner);
-    mvaddch(y + height, x, corner);
-    mvaddch(y + height, x + len, corner);
+	mvaddch(y, x, corner_tl);
+    mvaddch(y, x + len, corner_tr);
+    mvaddch(y + height, x, corner_bl);
+    mvaddch(y + height, x + len, corner_br);
     mvhline(y, x + 1, horiz, len - 1);
     mvhline(y + height, x + 1, horiz, len - 1);
     mvvline(y + 1, x, vert, height - 1);
