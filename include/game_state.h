@@ -13,7 +13,7 @@ typedef struct {
   int unlocked;
   int quant;
   int max_quant;
-  unsigned long APS_bonus;
+  float APS_bonus;
 } StoreItem;
 
 typedef struct {
@@ -30,8 +30,8 @@ typedef enum {
 typedef struct {
     GameState cur_state;
     StoreContext *store;
-    unsigned long apps;
-    unsigned long apps_per_sec;
+    double apps;
+    double apps_per_sec;
 } GameContext;
 
 #endif

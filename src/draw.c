@@ -51,7 +51,7 @@ void draw_store(int rows, int cols, GameContext *ctx) {
     StoreContext *store = ctx->store;
 
     char msg[MAX_MSG_CHARS];
-    sprintf(msg, "Applications: %lu", ctx->apps);
+    sprintf(msg, "Applications: %lu", (unsigned long) ctx->apps);
     mvprintw(get_store_header_start_y(rows), get_middle_x(cols, strlen("MARKETPLACE")), "MARKETPLACE");
     mvprintw(get_store_header_start_y(rows) + 1, get_middle_x(cols, strlen(msg)), msg);
 
@@ -61,13 +61,10 @@ void draw_store(int rows, int cols, GameContext *ctx) {
     int max_items = store_height - 1;
     int start = 0;
     if (store->selected_item >= max_items) {
-        mvprintw(4, 5, "ASD");
         start = store->selected_item - max_items + 1;
     }
-    mvprintw(5, 5, "%d, %d, %d", start, max_items, store->selected_item);
     int drawn = 0;
     for (int i = start; i < store->unlocked_count && drawn < max_items; ++i) {
-        mvprintw(6, 5, "%d", drawn);
         StoreItem *item = &store->items[i];
         if (store->selected_item == i) {
             // Print description

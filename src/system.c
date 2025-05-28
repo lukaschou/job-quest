@@ -21,13 +21,13 @@ void init_store(StoreContext *store) {
   store->selected_item = 0;
   store->unlocked_count = 0;
   store->items[store->unlocked_count++] = (StoreItem){
-    .name = "LeetCode",
-    .desc = "Solve a medium. Cry. Repeat. Character-building stuff.",
-    .price = 50,
+    .name = "LeetCode Practice",
+    .desc = "Grind code. Cry. Repeat. Character-building stuff.",
+    .price = 15,
     .quant = 0,
     .max_quant = MAX_ITEM_QUANTITY,
     .unlocked = 1,
-    .APS_bonus = 1,
+    .APS_bonus = 0.1,
   };
   store->items[store->unlocked_count++] = (StoreItem){
     .name = "AI Cover Letter",

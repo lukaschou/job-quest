@@ -1,6 +1,7 @@
 #include "events.h"
 #include "game_state.h"
 #include <ncurses.h>
+#include <math.h>
 
 /* Update key state */
 void get_keys(KeyState keys[MAX_KEYS]) {
@@ -53,7 +54,7 @@ void update_store(GameContext *ctx, KeyState keys[MAX_KEYS]) {
             selectedItem->quant += 1;
             ctx->apps -= selectedItem->price;
             ctx->apps_per_sec += selectedItem->APS_bonus;
-            selectedItem->price *= 1.05;
+            selectedItem->price = ceil(selectedItem->price * 1.05);
         }
     }
 }
