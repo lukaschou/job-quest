@@ -1,5 +1,6 @@
 #include "draw.h"
 #include <ncurses.h>
+#include <math.h>
 
 int get_opts_start_y(int rows) {
     // Opts line is always 7/8 down the screen
@@ -65,17 +66,19 @@ void comma_format(char *dest, unsigned long n) {
     dest[j] = '\0';
 }
 
-/* Format numbers over one million with a sufix */
-void suffix_format(char *dest, double n) {
-    char suffixes[] = { ' ', ' ', 'm', 'b', 't' }; 
+/* Format numbers with a suffix. Behavior is unspecified for values
+ * beyond the trillions. */
+void suffix_format(char *dest, unsigned long n) {
+    char suffixes[] = { '\0', 'k', 'm', 'b', 't' }; 
     double value = n;
-    int suffix_i = 0;
+    int suffix_i = 0;   
 
-    while (value >= 1000.0 && suffix_i < 3) {
+    while (value >= 1000.0 && suffix_i < 4) {
         value /= 1000.0;
         suffix_i++;
     }
-
+    
+    value = floor(value * 1000.0) / 1000.0;
     sprintf(dest, "%.3f%c", value, suffixes[suffix_i]);
 }
 
