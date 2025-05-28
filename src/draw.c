@@ -42,8 +42,52 @@ void draw_opts(int rows, int cols, GameState state) {
 /* Draws home screen */
 void draw_home(int rows, int cols, long apps) {
     char apps_msg[MAX_MSG_CHARS];
-    sprintf(apps_msg, "Applications: %lu", apps);
+    sprintf(apps_msg, "Applications: %'lu", apps);
     mvprintw(rows / 2, get_middle_x(cols, strlen(apps_msg)), apps_msg);
+}
+
+/* Comma seperates a number less than one-million */
+void comma_format(char *dest, unsigned long n) {
+    char reversed[10];
+    int i = 0, j = 0;
+    do {
+        if (i > 0 && i % 3 == 0) {
+            reversed[j++] = ',';
+        }
+        reversed[j++] = '0' + (n % 10);
+        n /= 10;
+        i++;
+    } while (n > 0);
+
+    for (int k = 0; k < j; ++k) {
+        dest[k] = reversed[j - k - 1];
+    }
+    dest[j] = '\0';
+}
+
+/* Format numbers over one million with a sufix */
+void suffix_format(char *dest, double n) {
+    char suffixes[] = { ' ', ' ', 'm', 'b', 't' }; 
+    double value = n;
+    int suffix_i = 0;
+
+    while (value >= 1000.0 && suffix_i < 3) {
+        value /= 1000.0;
+        suffix_i++;
+    }
+
+    sprintf(dest, "%.3f%c", value, suffixes[suffix_i]);
+}
+
+void format_apps_text(char msg[MAX_APP_DISPLAY_CHARS], double apps) {
+    char num_str[10];
+    if (apps < 1000000) {
+        comma_format(num_str, (unsigned long) apps);
+        sprintf(msg, "%s applications", num_str);
+    } else {
+        suffix_format(num_str, apps);
+        sprintf(msg, "%s applications", num_str);
+    }
 }
 
 /* Draws store screen */
@@ -51,7 +95,7 @@ void draw_store(int rows, int cols, GameContext *ctx) {
     StoreContext *store = ctx->store;
 
     char msg[MAX_MSG_CHARS];
-    sprintf(msg, "Applications: %lu", (unsigned long) ctx->apps);
+    format_apps_text(msg, (unsigned long) ctx->apps);
     mvprintw(get_store_header_start_y(rows), get_middle_x(cols, strlen("MARKETPLACE")), "MARKETPLACE");
     mvprintw(get_store_header_start_y(rows) + 1, get_middle_x(cols, strlen(msg)), msg);
 
@@ -85,12 +129,20 @@ void draw_store(int rows, int cols, GameContext *ctx) {
         ); 
         attroff(A_STANDOUT);
         // Print quantity on right side (MAX 3 digits)
-        mvprintw(
-            items_start_y + drawn,
-            get_middle_x(cols, STORE_ITEMS_WIDTH) + STORE_ITEMS_WIDTH  - 5,
-            "x%03d",
-            item->quant
-        );
+        if (item->quant < item->max_quant) {
+             mvprintw(
+                items_start_y + drawn,
+                get_middle_x(cols, STORE_ITEMS_WIDTH) + STORE_ITEMS_WIDTH  - 5,
+                "x%03d",
+                item->quant
+            );
+        } else {
+            mvprintw(
+                items_start_y + drawn,
+                get_middle_x(cols, STORE_ITEMS_WIDTH) + STORE_ITEMS_WIDTH  - 5,
+                "xMAX"
+            );
+        }
         drawn++;
     }
     create_box(

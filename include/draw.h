@@ -9,6 +9,7 @@
 #define STORE_ITEMS_WIDTH 50
 #define STORE_DESC_WIDTH 70
 #define STORE_DESC_HEIGHT 4
+#define MAX_APP_DISPLAY_CHARS 45
 
 void draw(GameContext *ctx);
 void draw_home(int rows, int cols, long apps);

@@ -54,7 +54,7 @@ void update_store(GameContext *ctx, KeyState keys[MAX_KEYS]) {
             selectedItem->quant += 1;
             ctx->apps -= selectedItem->price;
             ctx->apps_per_sec += selectedItem->APS_bonus;
-            selectedItem->price = ceil(selectedItem->price * 1.05);
+            selectedItem->price = ceil(selectedItem->price * selectedItem->price_inc);
         }
     }
 }
