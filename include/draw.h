@@ -6,10 +6,14 @@
 
 #define MAX_OPTS 3
 #define MAX_MSG_CHARS 256
-#define STORE_ITEMS_WIDTH 50
+
+#define STORE_ITEMS_BOX_WIDTH 50
 #define STORE_DESC_WIDTH 70
 #define STORE_DESC_HEIGHT 4
-#define MAX_APP_DISPLAY_CHARS 45
+
+#define SUFFIX_THRESHOLD 1000000
+#define MIN_STORE_BOX_WIDTH 50
+#define MAX_APPS_DISPLAY_LEN (MIN_STORE_BOX_WIDTH) 
 
 void draw(GameContext *ctx);
 void draw_home(int rows, int cols, long apps);
