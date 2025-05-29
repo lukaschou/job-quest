@@ -45,12 +45,22 @@ void update_store(GameContext *ctx, KeyState keys[MAX_KEYS]) {
         store->selected_item++;
     } else if (keys['b']) { // buy item
         StoreItem* selectedItem = &store->items[store->selected_item];
-        if (selectedItem->price <= ctx->apps && selectedItem->quant < selectedItem->max_quant) 
-        {
+        if (
+            selectedItem->price <= ctx->apps &&
+            selectedItem->quant < selectedItem->max_quant
+        ) {
             selectedItem->quant += 1;
             ctx->apps -= selectedItem->price;
             ctx->apps_per_sec += selectedItem->APS_bonus;
             selectedItem->price = ceil(selectedItem->price * selectedItem->price_inc);
+            StoreItem *next_item = &store->items[store->unlocked_count];
+            if (
+                store->unlocked_count < MAX_STORE_ITEMS &&
+                ctx->apps_per_sec >= next_item->APS_unlock_rqmt
+            ) {
+                next_item->unlocked = 1;
+                store->unlocked_count++; 
+            }
         }
     }
 }

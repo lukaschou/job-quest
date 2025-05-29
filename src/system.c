@@ -16,40 +16,45 @@ void die_sys(char *msg) {
     exit(EXIT_FAILURE);
 }
 
-/* Initializes and populates the store */
+/* Initializes and populates the store.
+ * Keep in mind these must be in UNLOCK order. */
 void init_store(StoreContext *store) {
-  store->selected_item = 0;
-  store->unlocked_count = 0;
-  store->items[store->unlocked_count++] = (StoreItem){
-    .name = "LeetCode Practice",
-    .desc = "Character-building stuff.",
-    .price = 15,
-    .quant = 0,
-    .max_quant = MAX_ITEM_QUANTITY,
-    .unlocked = 1,
-    .APS_bonus = 0.1,
-    .price_inc = 1.05
-  };
-  store->items[store->unlocked_count++] = (StoreItem){
-    .name = "AI Cover Letter",
-    .desc = "Looks good. No one read it anyway.",
-    .price = 100,
-    .quant = 0,
-    .max_quant = MAX_ITEM_QUANTITY,
-    .unlocked = 1,
-    .APS_bonus = 2,
-    .price_inc = 1.1
-  };
-  store->items[store->unlocked_count++] = (StoreItem){
-    .name = "Buzzword Pack",
-    .desc = "Synergize your leverage to optimize alignment.",
-    .price = 200,
-    .quant = 0,
-    .max_quant = MAX_ITEM_QUANTITY,
-    .unlocked = 1,
-    .APS_bonus = 3,
-    .price_inc = 1.15
-  };
+    store->selected_item = 0;
+    store->unlocked_count = 1;
+    int i = 0;
+    store->items[i++] = (StoreItem){
+        .name = "LeetCode Practice",
+        .desc = "Character-building stuff.",
+        .price = 15,
+        .quant = 0,
+        .max_quant = MAX_ITEM_QUANTITY,
+        .unlocked = 1,
+        .APS_bonus = 0.1,
+        .APS_unlock_rqmt = -1,
+        .price_inc = 1.05
+    };
+    store->items[i++] = (StoreItem){
+        .name = "AI Cover Letter",
+        .desc = "Looks good. No one read it anyway.",
+        .price = 100,
+        .quant = 0,
+        .max_quant = MAX_ITEM_QUANTITY,
+        .unlocked = 0,
+        .APS_bonus = 2,
+        .APS_unlock_rqmt = 0.7,
+        .price_inc = 1.1
+    };
+    store->items[i++] = (StoreItem){
+        .name = "Buzzword Pack",
+        .desc = "Synergize your leverage to optimize alignment.",
+        .price = 200,
+        .quant = 0,
+        .max_quant = MAX_ITEM_QUANTITY,
+        .unlocked = 0,
+        .APS_bonus = 3,
+        .APS_unlock_rqmt = 1.6,
+        .price_inc = 1.15
+    };
 }
 
 

@@ -14,6 +14,7 @@ typedef struct {
   int quant;
   int max_quant;
   float APS_bonus;
+  float APS_unlock_rqmt;
   float price_inc;
 } StoreItem;
 

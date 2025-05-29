@@ -1,4 +1,5 @@
 #include "draw.h"
+#include "game_state.h"
 #include <ncurses.h>
 #include <math.h>
 
@@ -32,7 +33,7 @@ void comma_format(char *dest, unsigned long n) {
 
 /* Format numbers with a suffix. Behavior is unspecified for values
  * beyond the trillions. */
-void suffix_format(char *dest, unsigned long n) {
+void suffix_format(char *dest, double n) {
     char suffixes[] = { '\0', 'k', 'm', 'b', 't' }; 
     double value = n;
     int suffix_i = 0;   
@@ -49,16 +50,26 @@ void suffix_format(char *dest, unsigned long n) {
 /* Formats application count into a UI-friendly string */
 void format_apps_display_text(
     char msg[MAX_APPS_DISPLAY_LEN],
-    unsigned long apps
+    GameContext *ctx
+    
 ) {
-    char num_str[MAX_APPS_DISPLAY_LEN - sizeof(" applications")];
-    if (apps < SUFFIX_THRESHOLD) {
-        comma_format(num_str, apps);
-    } else {
-        suffix_format(num_str, apps);
-    }
+    char num_str[MAX_SUFFIX_FORMAT_LEN];
+    char aps_str[MAX_SUFFIX_FORMAT_LEN];
 
-    snprintf(msg, MAX_APPS_DISPLAY_LEN, "%s applications", num_str);
+    if (ctx->apps < SUFFIX_THRESHOLD) {
+        comma_format(num_str, (unsigned int) ctx->apps);
+    } else {
+        suffix_format(num_str, ctx->apps);
+    }
+    
+    suffix_format(aps_str, ctx->apps_per_sec);
+    snprintf(
+        msg,
+        MAX_APPS_DISPLAY_LEN,
+        "%s applications (%s/s)", 
+        num_str,
+        aps_str
+    );
 }
 
 /* Calculate header start row based on screen height */
@@ -96,7 +107,7 @@ void draw_store(int rows, int cols, GameContext *ctx) {
 
     /* Store header */
     char apps_display_msg[MAX_APPS_DISPLAY_LEN];
-    format_apps_display_text(apps_display_msg, (unsigned long) ctx->apps);
+    format_apps_display_text(apps_display_msg, ctx);
     mvprintw(
         store_header_start_row(rows),
         text_start_col_centered(cols, strlen("MARKETPLACE")),

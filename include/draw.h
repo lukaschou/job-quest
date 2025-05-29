@@ -5,6 +5,7 @@
 #include <string.h>
 
 #define SUFFIX_THRESHOLD 1000000
+#define MAX_SUFFIX_FORMAT_LEN 8
 #define MIN_STORE_BOX_WIDTH 50
 #define MAX_STORE_BOX_WIDTH 80
 #define MAX_APPS_DISPLAY_LEN (MIN_STORE_BOX_WIDTH) 
@@ -17,9 +18,9 @@ int store_items_box_width(int scr_cols);
 int text_start_col_centered(int scr_cols, int n);
 void format_apps_display_text(
     char msg[MAX_APPS_DISPLAY_LEN],
-    unsigned long apps
+    GameContext *ctx
 );
-void suffix_format(char *dest, unsigned long n);
+void suffix_format(char *dest, double n);
 void comma_format(char *dest, unsigned long n);
 
 void draw(GameContext *ctx);
