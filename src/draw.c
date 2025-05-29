@@ -47,7 +47,7 @@ void suffix_format(char *dest, double n) {
     sprintf(dest, "%.3f%c", value, suffixes[suffix_i]);
 }
 
-/* Formats application count into a UI-friendly string */
+/* Formats application count and APS into a UI-friendly string */
 void format_apps_display_text(
     char msg[MAX_APPS_DISPLAY_LEN],
     GameContext *ctx
