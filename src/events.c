@@ -29,8 +29,6 @@ int update(GameContext *ctx, KeyState keys[MAX_KEYS]) {
         return 0;
     } else if (keys[' '] == KEY_PRESS) {
         ctx->apps++;
-    } else if (ctx->cur_state == STATE_HOME) {
-        update_home(ctx, keys);
     } else if (ctx->cur_state == STATE_STORE) {
         update_store(ctx, keys);
     }
@@ -41,9 +39,7 @@ int update(GameContext *ctx, KeyState keys[MAX_KEYS]) {
 void update_store(GameContext *ctx, KeyState keys[MAX_KEYS]) {
     StoreContext *store = ctx->store;
 
-    if (keys['h']) {
-        ctx->cur_state = STATE_HOME;
-    } else if (keys['k'] && store->selected_item > 0) {
+    if (keys['k'] && store->selected_item > 0) {
         store->selected_item--;
     } else if (keys['j'] && store->selected_item < store->unlocked_count - 1) {
         store->selected_item++;
@@ -62,10 +58,3 @@ void update_store(GameContext *ctx, KeyState keys[MAX_KEYS]) {
 void tick_update(GameContext *ctx) {
     ctx->apps += ctx->apps_per_sec;
 } 
-
-void update_home(GameContext *ctx, KeyState keys[MAX_KEYS]) {
-    if (keys['l']) {
-        ctx->store->selected_item = 0;
-        ctx->cur_state = STATE_STORE;
-    }
-}

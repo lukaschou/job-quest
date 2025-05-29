@@ -4,21 +4,27 @@
 #include "game_state.h"
 #include <string.h>
 
-#define MAX_OPTS 3
-#define MAX_MSG_CHARS 256
-
-#define STORE_ITEMS_BOX_WIDTH 50
-#define STORE_DESC_WIDTH 70
-#define STORE_DESC_HEIGHT 4
-
 #define SUFFIX_THRESHOLD 1000000
 #define MIN_STORE_BOX_WIDTH 50
+#define MAX_STORE_BOX_WIDTH 80
 #define MAX_APPS_DISPLAY_LEN (MIN_STORE_BOX_WIDTH) 
+#define SMALL_SCR_HEIGHT_THRESH 45
+#define ITEM_DESC_BOX_HEIGHT 6
+
+int store_header_start_row(int scr_rows);
+int opts_start_row(int scr_rows);
+int store_items_box_width(int scr_cols);
+int text_start_col_centered(int scr_cols, int n);
+void format_apps_display_text(
+    char msg[MAX_APPS_DISPLAY_LEN],
+    unsigned long apps
+);
+void suffix_format(char *dest, unsigned long n);
+void comma_format(char *dest, unsigned long n);
 
 void draw(GameContext *ctx);
-void draw_home(int rows, int cols, long apps);
 void draw_store(int rows, int cols, GameContext *ctx);
-void draw_opts(int rows, int cols, GameState state);
+void draw_opts(int rows, int cols);
 void create_box(
     int y,
     int x,

@@ -2,49 +2,13 @@
 #include <ncurses.h>
 #include <math.h>
 
-int get_opts_start_y(int rows) {
-    // Opts line is always 7/8 down the screen
-    return (rows * 7) / 8;
-}
-
-int get_store_header_start_y(int rows) {
-    // Store header begins 1/8 down the screen
-    return rows / 8;
-}
-
-int get_middle_x(int cols, int msg_len) {
-    return (cols - msg_len) / 2;
-}
-
 /* Draws options line displayed on all screens */
-void draw_opts(int rows, int cols, GameState state) {
-    char *opts[MAX_OPTS];
-    int count = 0;
-    opts[count++] = "[q]: Quit";
-
-    if (state == STATE_HOME) {
-        opts[count++] = "[l]: Store";
-    } else if (state == STATE_STORE) {
-        opts[count++] = "[h]: Home";
-    }
-
-    // Concatenate all options with 10 spaces
-    char opts_msg[MAX_MSG_CHARS] = {0};
-    for (int i = 0; i < count; ++i) {
-        strcat(opts_msg, opts[i]);
-        if (i != count-1) {
-            strcat(opts_msg, "          ");
-        }
-    }
-
-    mvprintw(get_opts_start_y(rows), get_middle_x(cols, strlen(opts_msg)), opts_msg);
-}
-
-/* Draws home screen */
-void draw_home(int rows, int cols, long apps) {
-    char apps_msg[MAX_MSG_CHARS];
-    sprintf(apps_msg, "Applications: %'lu", apps);
-    mvprintw(rows / 2, get_middle_x(cols, strlen(apps_msg)), apps_msg);
+void draw_opts(int rows, int cols) {
+    mvprintw(
+        opts_start_row(rows),
+        text_start_col_centered(cols, sizeof("[q]: Quit")),
+        "[q]: Quit"
+    );
 }
 
 /* Comma seperates a number less than one-million */
@@ -82,12 +46,12 @@ void suffix_format(char *dest, unsigned long n) {
     sprintf(dest, "%.3f%c", value, suffixes[suffix_i]);
 }
 
+/* Formats application count into a UI-friendly string */
 void format_apps_display_text(
     char msg[MAX_APPS_DISPLAY_LEN],
     unsigned long apps
 ) {
-    char num_str[MAX_APPS_DISPLAY_LEN - strlen(" applications")];
-
+    char num_str[MAX_APPS_DISPLAY_LEN - sizeof(" applications")];
     if (apps < SUFFIX_THRESHOLD) {
         comma_format(num_str, apps);
     } else {
@@ -97,74 +61,125 @@ void format_apps_display_text(
     snprintf(msg, MAX_APPS_DISPLAY_LEN, "%s applications", num_str);
 }
 
+/* Calculate header start row based on screen height */
+int store_header_start_row(int scr_rows) {
+    return (scr_rows < SMALL_SCR_HEIGHT_THRESH) ? scr_rows / 10 : scr_rows / 8;
+}
+
+/* Caclulate column start for a centered message of length n */
+int text_start_col_centered(int scr_cols, int n) {
+    return (scr_cols - n) / 2;
+}
+
+/* Calculates game options start row based on screen height */
+int opts_start_row(int scr_rows) {
+    return (scr_rows < SMALL_SCR_HEIGHT_THRESH) 
+        ? (scr_rows * 9) / 10
+        : (scr_rows * 7) / 8;
+}
+
+/* Calculates store box width based on screen width */
+int store_items_box_width(int scr_cols) {
+    const int des_width = scr_cols / 3;
+    if (des_width < MIN_STORE_BOX_WIDTH) {
+        return MIN_STORE_BOX_WIDTH;
+    } else if (des_width > MAX_STORE_BOX_WIDTH) {
+        return MAX_STORE_BOX_WIDTH;
+    } else {
+        return des_width;
+    }
+}
+
 /* Draws store screen */
 void draw_store(int rows, int cols, GameContext *ctx) {
     StoreContext *store = ctx->store;
 
+    /* Store header */
     char apps_display_msg[MAX_APPS_DISPLAY_LEN];
     format_apps_display_text(apps_display_msg, (unsigned long) ctx->apps);
     mvprintw(
-        get_store_header_start_y(rows),
-        get_middle_x(cols, strlen("MARKETPLACE")),
+        store_header_start_row(rows),
+        text_start_col_centered(cols, strlen("MARKETPLACE")),
         "MARKETPLACE"
     );
     mvprintw(
-        get_store_header_start_y(rows) + 1,
-        get_middle_x(cols, strlen(apps_display_msg)),
+        store_header_start_row(rows) + 1,
+        text_start_col_centered(cols, strlen(apps_display_msg)),
         apps_display_msg
     );
-
-    int items_start_y = get_store_header_start_y(rows) + 3;
-    int store_box_y = get_store_header_start_y(rows) + 2;
-    int store_height = get_opts_start_y(rows) - store_box_y - STORE_DESC_HEIGHT - 4;
-    int max_items = store_height - 1;
-    int start = 0;
-    if (store->selected_item >= max_items) {
-        start = store->selected_item - max_items + 1;
-    }
+   
+    /* Store items */
+    int store_items_box_start_row = store_header_start_row(rows) + 2;
+    int store_items_box_start_col = 
+        text_start_col_centered(cols, store_items_box_width(cols));
+    // 2 is for padding between opts, desc box, and store box 
+    int store_items_box_height = 
+        opts_start_row(rows) 
+        - ITEM_DESC_BOX_HEIGHT 
+        - 2 
+        - store_items_box_start_row;
+    int store_items_list_start_row = store_items_box_start_row + 1;
+    int store_items_box_capacity = store_items_box_height - 2;
+    int start = store->selected_item >= store_items_box_capacity
+        ? store->selected_item - store_items_box_capacity + 1
+        : 0; 
+    int desc_start_row = opts_start_row(rows) - 5;
     int drawn = 0;
-    for (int i = start; i < store->unlocked_count && drawn < max_items; ++i) {
+
+    for (
+        int i = start;
+        i < store->unlocked_count && drawn < store_items_box_capacity;
+        ++i
+    ) {
         StoreItem *item = &store->items[i];
         if (store->selected_item == i) {
             // Print description
             mvprintw(
-                get_opts_start_y(rows) - 4,
-                (cols - strlen(item->desc)) / 2,
+                desc_start_row,
+                text_start_col_centered(cols, strlen(item->desc)),
                 "%s",
                 item->desc
-            ); 
+            );
+            char item_stats[MIN_STORE_BOX_WIDTH];
+            snprintf(
+                item_stats,
+                MIN_STORE_BOX_WIDTH,
+                "Apps/sec: %.2f",
+                item->APS_bonus
+            );
+            mvprintw(
+                desc_start_row + 1,
+                text_start_col_centered(cols, strlen(item_stats)),
+                "%s",
+                item_stats
+            );
             attron(A_STANDOUT); // Highlight
         }
+        // Print item name and price
         mvprintw(
-            items_start_y + drawn,
-            get_middle_x(cols, STORE_ITEMS_BOX_WIDTH) + 3,
+            store_items_list_start_row + drawn,
+            store_items_box_start_col + 2,
             "%s (%d)",
             item->name,
             item->price
         ); 
         attroff(A_STANDOUT);
         // Print quantity on right side (MAX 3 digits)
-        if (item->quant < item->max_quant) {
-             mvprintw(
-                items_start_y + drawn,
-                get_middle_x(cols, STORE_ITEMS_BOX_WIDTH) + STORE_ITEMS_BOX_WIDTH  - 5,
-                "x%03d",
-                item->quant
-            );
-        } else {
-            mvprintw(
-                items_start_y + drawn,
-                get_middle_x(cols, STORE_ITEMS_BOX_WIDTH) + STORE_ITEMS_BOX_WIDTH  - 5,
-                "xMAX"
-            );
-        }
+        mvprintw(
+            store_items_list_start_row + drawn,
+            store_items_box_start_col + store_items_box_width(cols) - 5,
+            item->quant < item->max_quant ? "x%03d" : "xMAX",
+            item->quant
+        ); 
         drawn++;
     }
+
+    /* Boxes */
     create_box(
-        store_box_y,
-        get_middle_x(cols, STORE_ITEMS_BOX_WIDTH),
-        STORE_ITEMS_BOX_WIDTH,
-        store_height,
+        store_items_box_start_row,
+        store_items_box_start_col,
+        store_items_box_width(cols),
+        store_items_box_height,
         '+',
         '+',
         '+',
@@ -173,10 +188,10 @@ void draw_store(int rows, int cols, GameContext *ctx) {
         '|'
     );
     create_box(
-        get_opts_start_y(rows) - STORE_DESC_HEIGHT - 2,
-        get_middle_x(cols, STORE_DESC_WIDTH),
-        STORE_DESC_WIDTH,
-        STORE_DESC_HEIGHT,
+        opts_start_row(rows) - ITEM_DESC_BOX_HEIGHT - 1,
+        text_start_col_centered(cols, store_items_box_width(cols)),
+        store_items_box_width(cols),
+        ITEM_DESC_BOX_HEIGHT,
         '[',
         ']',
         '[',
@@ -190,14 +205,11 @@ void draw(GameContext *ctx) {
     int rows, cols;
     getmaxyx(stdscr, rows, cols);
     switch (ctx->cur_state) {
-        case STATE_HOME:
-            draw_home(rows, cols, ctx->apps);
-            break;
         case STATE_STORE:
             draw_store(rows, cols, ctx);
             break;
     }
-    draw_opts(rows, cols, ctx->cur_state);
+    draw_opts(rows, cols);
     wborder(stdscr, '|', '|', '-', '-', '+', '+', '+', '+');
 }
 
@@ -220,10 +232,10 @@ void create_box(
 ) {	
 	mvaddch(y, x, corner_tl);
     mvaddch(y, x + len, corner_tr);
-    mvaddch(y + height, x, corner_bl);
-    mvaddch(y + height, x + len, corner_br);
+    mvaddch(y + height - 1, x, corner_bl);
+    mvaddch(y + height - 1, x + len, corner_br);
     mvhline(y, x + 1, horiz, len - 1);
-    mvhline(y + height, x + 1, horiz, len - 1);
-    mvvline(y + 1, x, vert, height - 1);
-    mvvline(y + 1, x + len, vert, height - 1);
+    mvhline(y + height - 1, x + 1, horiz, len - 1);
+    mvvline(y + 1, x, vert, height - 2);
+    mvvline(y + 1, x + len, vert, height - 2);
 }

@@ -22,7 +22,7 @@ void init_store(StoreContext *store) {
   store->unlocked_count = 0;
   store->items[store->unlocked_count++] = (StoreItem){
     .name = "LeetCode Practice",
-    .desc = "Grind code. Cry. Repeat. Character-building stuff.",
+    .desc = "Character-building stuff.",
     .price = 15,
     .quant = 0,
     .max_quant = MAX_ITEM_QUANTITY,
@@ -56,7 +56,7 @@ void init_store(StoreContext *store) {
 /* Initializes game context and screen system */
 void init_game(GameContext *ctx, StoreContext *store) {
   init_store(store);
-  ctx->cur_state = STATE_HOME;
+  ctx->cur_state = STATE_STORE;
   ctx->apps = 0;
   ctx->store = store;
   init_main_scr();

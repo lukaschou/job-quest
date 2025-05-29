@@ -8,7 +8,7 @@
 
 typedef struct {
   char *name;
-  char *desc;
+  char desc[50];
   unsigned long price;
   int unlocked;
   int quant;
@@ -24,7 +24,6 @@ typedef struct {
 } StoreContext;
 
 typedef enum {
-    STATE_HOME,
     STATE_STORE,
 } GameState;
 
