@@ -19,7 +19,6 @@ int main() {
     get_keys(keys);
     
     time_t now = time(NULL);
-    ctx.apps += 10000;
     if (now > last_tick) {
       last_tick = now;
       tick_update(&ctx);

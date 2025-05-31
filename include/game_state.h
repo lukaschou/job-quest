@@ -8,12 +8,13 @@
 
 typedef struct {
   char *name;
-  char *desc;
+  char desc[50];
   unsigned long price;
   int unlocked;
   int quant;
   int max_quant;
   float APS_bonus;
+  float APS_unlock_rqmt;
   float price_inc;
 } StoreItem;
 
@@ -24,7 +25,6 @@ typedef struct {
 } StoreContext;
 
 typedef enum {
-    STATE_HOME,
     STATE_STORE,
 } GameState;
 
