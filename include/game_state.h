@@ -3,7 +3,7 @@
 
 #include <ncurses.h>
 
-#define MAX_STORE_ITEMS 3
+#define MAX_STORE_ITEMS 4
 #define MAX_ITEM_QUANTITY 999
 
 typedef struct {

@@ -31,7 +31,7 @@ void init_store(StoreContext *store) {
         .unlocked = 1,
         .APS_bonus = 0.1,
         .APS_unlock_rqmt = -1,
-        .price_inc = 1.05
+        .price_inc = 1.15
     };
     store->items[i++] = (StoreItem){
         .name = "AI Cover Letter",
@@ -40,19 +40,29 @@ void init_store(StoreContext *store) {
         .quant = 0,
         .max_quant = MAX_ITEM_QUANTITY,
         .unlocked = 0,
-        .APS_bonus = 2,
-        .APS_unlock_rqmt = 0.7,
-        .price_inc = 1.1
+        .APS_bonus = 1,
+        .APS_unlock_rqmt = 0.3,
+        .price_inc = 1.15
     };
     store->items[i++] = (StoreItem){
         .name = "Buzzword Pack",
         .desc = "Synergize your leverage to optimize alignment.",
-        .price = 200,
+        .price = 800,
         .quant = 0,
         .max_quant = MAX_ITEM_QUANTITY,
         .unlocked = 0,
-        .APS_bonus = 3,
-        .APS_unlock_rqmt = 1.6,
+        .APS_bonus = 5,
+        .APS_unlock_rqmt = 1.8,
+        .price_inc = 1.15
+    };
+    store->items[i++] = (StoreItem){
+        .name = "LinkedIn Connection",
+        .desc = "Founder. Investor. Visionary. Unemployed.",
+        .price = 5400,
+        .quant = 0,
+        .max_quant = 500,
+        .APS_bonus = 8,
+        .APS_unlock_rqmt = 6.5,
         .price_inc = 1.15
     };
 }
