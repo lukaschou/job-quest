@@ -12,8 +12,9 @@ typedef enum {
 } KeyState;
 
 void get_keys(KeyState keys[MAX_KEYS]);
+long get_time();
 int update(GameContext *ctx, KeyState keys[MAX_KEYS]);
 void update_store(GameContext *ctx, KeyState keys[MAX_KEYS]);
-void tick_update(GameContext *ctx);
+void tick_update(GameContext *ctx, double time);
 
 #endif

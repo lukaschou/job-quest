@@ -1,7 +1,9 @@
 #include "events.h"
 #include "game_state.h"
+#include "system.h"
 #include <ncurses.h>
 #include <math.h>
+#include <time.h>
 
 /* Update key state */
 void get_keys(KeyState keys[MAX_KEYS]) {
@@ -18,6 +20,15 @@ void get_keys(KeyState keys[MAX_KEYS]) {
             keys[i] = KEY_INACTIVE;
         }
     }
+}
+
+long get_time() {
+    struct timespec time;
+    if (clock_gettime(CLOCK_MONOTONIC, &time) == -1) {
+        die_sys("clock_gettime");
+    }
+
+    return time.tv_sec * 1000000 + time.tv_nsec / 1000;
 }
 
 /* 
@@ -65,6 +76,7 @@ void update_store(GameContext *ctx, KeyState keys[MAX_KEYS]) {
     }
 }
 
-void tick_update(GameContext *ctx) {
-    ctx->apps += ctx->apps_per_sec;
+void tick_update(GameContext *ctx, double d_time) {
+    double seconds = d_time / 1000000;
+    ctx->apps += ctx->apps_per_sec * seconds;
 } 

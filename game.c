@@ -12,16 +12,16 @@ int main() {
   KeyState keys[MAX_KEYS] = { KEY_INACTIVE };
   init_game(&ctx, &store);
 
-  time_t last_tick = time(NULL);
+  long last_tick = get_time();
   while (1) {
     clear();
     draw(&ctx);
     get_keys(keys);
     
-    time_t now = time(NULL);
-    if (now > last_tick) {
-      last_tick = now;
-      tick_update(&ctx);
+    long now = get_time();
+    if (now > last_tick + 10000) {
+        tick_update(&ctx, now - last_tick);
+        last_tick = now;
     }
     // We don't need to 'refresh' since the getch() call in update does this
     if (!update(&ctx, keys)) {

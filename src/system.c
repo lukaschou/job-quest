@@ -73,6 +73,7 @@ void init_game(GameContext *ctx, StoreContext *store) {
   init_store(store);
   ctx->cur_state = STATE_STORE;
   ctx->apps = 0;
+  ctx->apps_per_sec = 0;
   ctx->store = store;
   init_main_scr();
 }
