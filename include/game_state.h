@@ -1,8 +1,6 @@
 #ifndef GAME_STATE_H
 #define GAME_STATE_H
 
-#include <ncurses.h>
-
 #define MAX_STORE_ITEMS 4
 #define MAX_ITEM_QUANTITY 999
 
