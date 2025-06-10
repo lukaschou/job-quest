@@ -23,48 +23,49 @@ void init_store(StoreContext *store) {
     store->unlocked_count = 1;
     int i = 0;
     store->items[i++] = (StoreItem){
-        .name = "LeetCode Practice",
-        .desc = "Character-building stuff.",
+        .name = "LinkedIn Connection",
+        .desc = "Founder. Investor. Visionary. Unemployed.",
         .price = 15,
         .quant = 0,
-        .max_quant = MAX_ITEM_QUANTITY,
+        .max_quant = 500,
         .unlocked = 1,
         .APS_bonus = 0.1,
         .APS_unlock_rqmt = -1,
         .price_inc = 1.15
     };
     store->items[i++] = (StoreItem){
-        .name = "AI Cover Letter",
-        .desc = "Looks good. No one read it anyway.",
+        .name = "LeetCode Practice",
+        .desc = "Character-building stuff.",
         .price = 100,
         .quant = 0,
         .max_quant = MAX_ITEM_QUANTITY,
         .unlocked = 0,
         .APS_bonus = 1,
-        .APS_unlock_rqmt = 0.3,
+        .APS_unlock_rqmt = 0.2,
+        .price_inc = 1.15
+    };
+    store->items[i++] = (StoreItem){
+        .name = "Job Fair T-Shirt",
+        .desc = "Lines are boring. Grab the free stuff and run.",
+        .price = 800,   
+        .quant = 0,
+        .max_quant = MAX_ITEM_QUANTITY,
+        .unlocked = 0,
+        .APS_bonus = 5,
+        .APS_unlock_rqmt = 1.5,
         .price_inc = 1.15
     };
     store->items[i++] = (StoreItem){
         .name = "Buzzword Pack",
         .desc = "Synergize your leverage to optimize alignment.",
-        .price = 800,
+        .price = 5400,
         .quant = 0,
         .max_quant = MAX_ITEM_QUANTITY,
         .unlocked = 0,
-        .APS_bonus = 5,
-        .APS_unlock_rqmt = 1.8,
-        .price_inc = 1.15
-    };
-    store->items[i++] = (StoreItem){
-        .name = "LinkedIn Connection",
-        .desc = "Founder. Investor. Visionary. Unemployed.",
-        .price = 5400,
-        .quant = 0,
-        .max_quant = 500,
         .APS_bonus = 8,
-        .APS_unlock_rqmt = 6.5,
+        .APS_unlock_rqmt = 5,
         .price_inc = 1.15
-    };
+    }; 
 }
 
 
